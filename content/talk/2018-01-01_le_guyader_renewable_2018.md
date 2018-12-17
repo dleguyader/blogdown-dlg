@@ -1,5 +1,5 @@
 +++
-title = "Renewable Marine Energy \& the Human dimension: a socio-system modelling approach"
+title = "Renewable Marine Energy \\& the Human dimension: a socio-system modelling approach"
 date = "2018-11-26"
 publication_types = ["0"]
 authors = ["D. Le Guyader"]
