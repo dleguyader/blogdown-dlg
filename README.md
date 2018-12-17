@@ -1,2 +1,2 @@
 # blogdown-dlg
-This is the personal web site of Damien Le Guyader
+This is the personal web site of Damien Le Guyader.
