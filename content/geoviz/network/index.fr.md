@@ -3,10 +3,10 @@
 date = "2016-04-27"
 
 # Project title.
-title = "The Channel shipping network"
+title = "Le réseau maririme en Manche"
 
 # Project summary to display on homepage.
-summary = "Spatial and hierarchical network of the Channel maritime traffic based on AIS data analysis"
+summary = "Réseau spatial hiérarchique du traffic maritime en Manche"
 
 
 

@@ -3,10 +3,10 @@
 date = "2015-12-27"
 
 # Project title.
-title = "Pressures"
+title = "Pressions anthropiques"
 
 # Project summary to display on homepage.
-summary = "Human pressures on the ecosystem components in the Iroise Sea Marine Protected Area"
+summary = "Inventaire des pressions exercées sur les composantes de l'écosystème du Parc Naturel Marin de la Mer d'Iroise"
 
 
 

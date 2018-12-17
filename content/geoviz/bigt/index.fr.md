@@ -3,10 +3,10 @@
 date = "2017-07-27"
 
 # Project title.
-title = "Coastal recreational activities"
+title = "Activités de loisir en zone côtière"
 
 # Project summary to display on homepage.
-summary = "Exploring the spatio-temporal distribution of coastal recreational activities"
+summary = "Exploration de la distribution spatio-temporelle d'activités de loisir"
 
 
 
