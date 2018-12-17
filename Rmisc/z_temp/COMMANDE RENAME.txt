@@ -1,0 +1,3 @@
+COMMANDE_PROMPT
+
+ren *.md *.fr.md
