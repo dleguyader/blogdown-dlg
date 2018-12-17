@@ -1,0 +1,364 @@
+---  
+title: "Comparaison entre des zones de pêche observées et estimées"  
+author: "Damien Le Guyader"  
+date: 2017-07-23T21:13:14-05:00
+tags: ["zones de pêche"]
+image:
+  caption: ''
+  focal_point: ''
+---  
+
+
+
+<div id="description" class="section level2">
+<h2>Description</h2>
+<p>Ce document fournit le script <code>R</code> et les données pour reproduire la comparaison entre les distributions spatiales de descripteurs observés et estimés (status de pêche, zones de pêche et intensité de pêche) pour une session de pêche à la drague au pétoncle noir comme illustré en figure supplémentaire S5 de Le Guyader <em>et.al</em> (2017):</p>
+<ul>
+<li><em>Le Guyader,D., C. Ray, F. Gourmelon, D. Brosset.</em>, (2017) - Defining high-resolution dredge fishing grounds with Automatic Identification System (AIS) data. <em>Aquatic Living Resources</em>. <a href="https://www.alr-journal.org/articles/alr/abs/2017/01/alr170010/alr170010.html">doi: 10.1051/alr/2017038</a></li>
+</ul>
+<blockquote>
+<p>Les données et le code <code>R</code> de replication sont téléchargeables sur le dépôt Github: <a href="https://github.com/dleguyader/LeGuyader-etal-2016-SM" class="uri">https://github.com/dleguyader/LeGuyader-etal-2016-SM</a>.</p>
+</blockquote>
+</div>
+<div id="charger-les-paquets-r" class="section level2">
+<h2>Charger les paquets <code>R</code></h2>
+<pre class="r"><code># ipak function from Steven Worthington: install and load multiple R packages.
+# https://gist.github.com/stevenworthington/3178163
+# check to see if packages are installed. Install them if they are not, then load them into the R session.
+
+ipak &lt;- function(pkg){
+    new.pkg &lt;- pkg[!(pkg %in% installed.packages()[, &quot;Package&quot;])]
+    if (length(new.pkg)) 
+        install.packages(new.pkg, dependencies = TRUE)
+    sapply(pkg, require, character.only = TRUE)
+}
+
+
+packages &lt;- c(&quot;sp&quot;, &quot;raster&quot;, &quot;rasterVis&quot;, &quot;rgdal&quot;, &quot;rgeos&quot;, &quot;spatstat&quot;, &quot;maptools&quot;, &quot;SDMTools&quot;, &quot;adehabitatLT&quot;, &quot;trip&quot;, &quot;mclust&quot;, &quot;ggplot2&quot;, &quot;plyr&quot;, &quot;dplyr&quot;, &quot;caret&quot;, &quot;viridis&quot;, &quot;grid&quot;, &quot;gridExtra&quot;)
+ipak(packages)</code></pre>
+<pre><code>##           sp       raster    rasterVis        rgdal        rgeos 
+##         TRUE         TRUE         TRUE         TRUE         TRUE 
+##     spatstat     maptools     SDMTools adehabitatLT         trip 
+##         TRUE         TRUE         TRUE         TRUE         TRUE 
+##       mclust      ggplot2         plyr        dplyr        caret 
+##         TRUE         TRUE         TRUE         TRUE         TRUE 
+##      viridis         grid    gridExtra 
+##         TRUE         TRUE         TRUE</code></pre>
+</div>
+<div id="realiser-les-analyses" class="section level2">
+<h2>Réaliser les analyses</h2>
+<div id="importer-les-donnees-et-definir-les-parametres" class="section level3">
+<h3>1 - Importer les données et définir les paramètres</h3>
+<pre class="r"><code>######## Fix the parameters ################
+
+dtm &lt;- 600  # maximimum duration allowed between 2 positions(in seconds)
+lhsv &lt;- 47  # grid size: here we use the grid size caculated (in metres)
+# for the 2011-2012 season(see paper for details)
+maille &lt;- 50  # smoothing factor (in metres): idem (see paper for details) 
+
+
+# Import data #######################
+
+
+# GPS data for the variegated scallop fishing trip have been anonymized and 
+# coordinates have been modified with a vectorial translation for confidentiality matters
+td &lt;- getwd()
+pet &lt;- read.csv2(file = paste0(td, &quot;/data/DataTripOneAnon.csv&quot;))
+coordinates(pet) &lt;- ~coords.x + coords.y  # To SPDF
+proj4string(pet) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+pet$time &lt;- as.POSIXct(pet$time, tz = &quot;UTC&quot;)  # set time to POSIXct format
+
+## Create the clipping polygon from the AIS data extent (e: extent)
+e &lt;- extent(pet) + 2000
+CP &lt;- as(e, &quot;SpatialPolygons&quot;)
+proj4string(CP) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+
+
+## Get coastline data and clip to data extent
+land &lt;- readOGR(dsn = paste0(td, &quot;/data&quot;), layer = &quot;land&quot;)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;C:\Users\Damien\Documents\R\document\DLG_WEBSITE_ACADEMIC_EN-FR\Version_4\content\post\data&quot;, layer: &quot;land&quot;
+## with 2617 features
+## It has 2 fields</code></pre>
+<pre class="r"><code>land &lt;- spTransform(land, CRS(&quot;+init=epsg:2154&quot;))
+land &lt;- gIntersection(land, CP, byid = TRUE)
+
+## Get sea shape data and clip to data extent
+sea &lt;- readOGR(dsn = paste0(td, &quot;/data&quot;), layer = &quot;sea&quot;)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;C:\Users\Damien\Documents\R\document\DLG_WEBSITE_ACADEMIC_EN-FR\Version_4\content\post\data&quot;, layer: &quot;sea&quot;
+## with 1 features
+## It has 1 fields</code></pre>
+<pre class="r"><code>sea &lt;- spTransform(sea, CRS(&quot;+init=epsg:2154&quot;))
+sea &lt;- gIntersection(sea, CP, byid = TRUE) </code></pre>
+</div>
+<div id="estimer-lactivite-de-peche" class="section level3">
+<h3>2 - Estimer l’activité de pêche</h3>
+<pre class="r"><code>## Function for data cleaning: time filter
+prep.fun &lt;- function(x, dtmax, analyse) {
+  # Fonction to calculate ditance (dist) between consecutive points, time
+  # duration (dt), mean speed (vmoy) and deletion according to dtmax x :
+  # the SPDF dtmax: maximimum duration allowed between 2 positions(in
+  # seconds), analyse: name of the metier (character string)
+  df &lt;- x
+  # conversion to ltraj class
+  d.ltraj &lt;- as.ltraj(coordinates(df), df$time, id = paste(analyse))
+  ld.ltraj &lt;- ld(d.ltraj)  # ltraj to data.frame class
+  df$dist &lt;- ld.ltraj$dist
+  df$dt &lt;- ld.ltraj$dt
+  df &lt;- subset(df, !is.na(df$dt))  # NA delete
+  df &lt;- subset(df, df$dt &lt; dtmax)  ## dt&gt;dtmax delete
+  df$vmoy &lt;- df$dist/df$dt  # Mean speed calculation
+  return(df)
+}
+
+pet.pt &lt;- prep.fun(x=pet, dtmax=dtm, analyse=&quot;Varieg. scall&quot;) 
+
+
+densy &lt;- densityMclust(pet.pt$vmoy)
+densy$modelName  # Optimal model</code></pre>
+<pre><code>## [1] &quot;V&quot;</code></pre>
+<pre class="r"><code>densy$G  # Optimal number of cluster according to the BIC value</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>CLUSTCOMBI &lt;- clustCombi(densy)
+# entPlot(CLUSTCOMBI$MclustOutput$z, CLUSTCOMBI$combiM, abc = &#39;normalized&#39;) 
+## No elbow in the NDE value, so we get the optimal number
+## of cluster according to the BIC value
+
+## Final classification
+yclust &lt;- Mclust(pet.pt$vmoy, modelNames = densy$modelName, G = densy$G)
+## We get G = 4 as we see no elbow in the NDE value
+
+## Get classification values
+pet.pt$CLUST &lt;- yclust$classification
+
+
+## Set classification (1) for estimated fishing positions and (0) for
+## estimated non fishing positions given the selected cluster(s)
+fishSet.fun &lt;- function(x, minClus, maxClus) {
+  # minClus: identifier for the minimum speed cluster (integer) maxClus:
+  # identifier for the maximum speed cluster (integer)
+  vmin.clust &lt;- NULL
+  max.clust &lt;- NULL
+  vmin.clust &lt;- min(x$vmoy[x$CLUST == minClus])
+  vmax.clust &lt;- max(x$vmoy[x$CLUST == maxClus])
+  x$estim &lt;- 0  # default steaming
+  x[x$vmoy &gt;= vmin.clust &amp; x$vmoy &lt;= vmax.clust, &quot;estim&quot;] &lt;- 1  # Fishing
+  x$act_estim &lt;- &quot;NO&quot;  # Steaming (i.e No Fishing)
+  x[x$vmoy &gt;= vmin.clust &amp; x$vmoy &lt;= vmax.clust, &quot;act_estim&quot;] &lt;- &quot;FISH&quot;  # Fishing
+  x$act_estim &lt;- factor(x$act_estim)
+  return(x)
+}
+
+pet.pt &lt;- fishSet.fun(pet.pt, minClus = 2, maxClus = 2)
+
+rm(densy, CLUSTCOMBI, yclust)
+
+confMat &lt;- confusionMatrix(table(pet.pt$act_estim, pet.pt$act_obs))  # Confusion matrix</code></pre>
+</div>
+<div id="identifier-les-zones-de-peche" class="section level3">
+<h3>3 - Identifier les zones de pêche</h3>
+<pre class="r"><code>## Data preparation for observed fishing positions
+val.obs &lt;- subset(data.frame(pet.pt), select = c(coords.x, coords.y, time, id, obs))
+names(val.obs) &lt;- c(&quot;x&quot;, &quot;y&quot;, &quot;date&quot;, &quot;id&quot;, &quot;statut&quot;)
+
+## Data preparation for estimated fishing positions
+val.est &lt;- subset(data.frame(pet.pt), select = c(coords.x, coords.y, time, id, estim))
+names(val.est) &lt;- c(&quot;x&quot;, &quot;y&quot;, &quot;date&quot;, &quot;id&quot;, &quot;statut&quot;)
+
+## Preparation for trip format coercion
+fun.group &lt;- function(x) {
+  x %&gt;% arrange(id, date) %&gt;% 
+    mutate(gap = c(0, (diff(statut) != 0) * 1)) %&gt;% 
+    mutate(group = cumsum(gap) + 1)
+}
+
+val.obs &lt;- ddply(val.obs, .(id, as.Date(date)), .fun = fun.group)
+val.est &lt;- ddply(val.est, .(id, as.Date(date)), .fun = fun.group)
+
+val.obs$mmsi &lt;- val.obs$id
+val.obs$id &lt;- paste(val.obs$mmsi, as.integer(as.Date(val.obs$date)), val.obs$group, sep = &quot;_&quot;)
+val.est$mmsi &lt;- val.est$id
+val.est$id &lt;- paste(val.est$mmsi, as.integer(as.Date(val.est$date)), val.est$group, sep = &quot;_&quot;)
+
+## Get only fishing positions
+val.obs &lt;- val.obs %&gt;%
+  filter(statut == 1) %&gt;%
+  dplyr::select(x,y,date,id)  
+
+val.est &lt;- val.est %&gt;% 
+  filter(statut == 1) %&gt;%   
+  dplyr::select(x,y,date,id)
+
+## Trip format calculation
+lenst.obs &lt;- tapply(val.obs$id, val.obs$id, length)
+## Delete non-consecutives fishing positions
+val.obs &lt;- val.obs[val.obs$id %in% names(lenst.obs)[lenst.obs &gt; 2], ]
+
+lenst.est &lt;- tapply(val.est$id, val.est$id, length)
+val.est &lt;- val.est[val.est$id %in% names(lenst.est)[lenst.est &gt; 2], ]
+
+## Observed fishing positions to trip format
+coordinates(val.obs) &lt;- ~x + y
+proj4string(val.obs) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+trip.obs &lt;- trip(val.obs, c(&quot;date&quot;, &quot;id&quot;))
+
+## Estimated fishing positions to trip format
+coordinates(val.est) &lt;- ~x + y
+proj4string(val.est) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+trip.est &lt;- trip(val.est, c(&quot;date&quot;, &quot;id&quot;))
+
+pet.est &lt;- trip.est
+pet.obs &lt;- trip.obs
+rm(trip.est, trip.obs, val.obs, val.est)
+
+
+## Function to compute KDE line density
+
+fishGround.fun &lt;- function(fishTrip, sea, grid, h) {
+  # fishTrip : fishing positions coerced to trip format sea: sea clip to extent of
+  # data grid, h: grid size and smoothing factor
+  
+  # 1- Data preparation
+  owin.sea &lt;- as(sea, &quot;owin&quot;)  # Window owin
+  bif &lt;- raster(sea, resolution = maille)  # Create template raster
+  projection(bif) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+  bif &lt;- raster::mask(x = bif, mask = sea)
+  
+  # 2 - compute KDE line density
+  t.obs &lt;- fishTrip
+  t.obs$jour &lt;- as.Date(t.obs$date)
+  vv.obs &lt;- sort(unique(as.Date(t.obs$date)))
+  psp.obs.tx &lt;- as.psp(t.obs)  # coerce to psp format
+  psp.obs.tx$window &lt;- owin.sea  # affect owin
+  # KDE line density
+  dk.lx.obs &lt;- density(psp.obs.tx, sigma = lhsv, dimyx = c(nrow(bif), ncol(bif)))
+  dk.obs &lt;- raster(dk.lx.obs)  # Raster conversion
+  projection(dk.obs) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+  return(dk.obs)
+}
+
+## Computation of KDE line density
+pet.dk.obs &lt;- fishGround.fun(fishTrip = pet.obs, sea = sea, grid = maille, h = lhsv)
+pet.dk.est &lt;- fishGround.fun(fishTrip = pet.est, sea = sea, grid = maille, h = lhsv)</code></pre>
+</div>
+<div id="calculer-lintensite-de-peche" class="section level3">
+<h3>4 - Calculer l’intensité de pêche</h3>
+<pre class="r"><code>## Function to compute the total fishing time spent per surface unit
+fishInt.fun &lt;- function(fishTrip, sea, grid) {
+  # fishTrip : fishing positions coerced to trip format sea: sea clip to
+  # extent of data grid size: see the paper
+  
+  owin.sea &lt;- as(sea, &quot;owin&quot;)  #Window owin
+  bif.trip &lt;- raster(sea, resolution = grid)
+  bif.trip[] &lt;- round(runif(nrow(bif.trip) * ncol(bif.trip)) * 100)
+  bif.trip &lt;- raster::mask(bif.trip, sea)
+  bif.trip.grid &lt;- as(bif.trip, &quot;SpatialGridDataFrame&quot;)
+  bif.trip.gt &lt;- getGridTopology(bif.trip.grid)  # Create empty grid
+  tripgrid &lt;- tripGrid(fishTrip, grid = bif.trip.gt, method = &quot;pixellate&quot;)  # compute time spent fishing
+  time.t &lt;- raster(tripgrid)
+  projection(time.t) &lt;- CRS(&quot;+init=epsg:2154&quot;)
+  time.est &lt;- raster::mask(time.t, sea)
+  return(time.est)
+}
+
+## Calculation of the total fishing time spent per surface unit
+pet.time.obs &lt;- fishInt.fun (fishTrip = pet.obs, sea = sea, grid = maille)
+pet.time.est &lt;- fishInt.fun (fishTrip = pet.est, sea = sea, grid = maille)</code></pre>
+</div>
+<div id="proceder-aux-comparaisons-avec-lindice-de-similarite-de-warren" class="section level3">
+<h3>5 - Procéder aux comparaisons avec l’indice de similarité de Warren</h3>
+<pre class="r"><code>## Function for Warren&#39;s similarity index
+evalMeth.fun &lt;- function(x, y) {
+  # x and y are rasters obs and estim
+  asc.est &lt;- asc.from.raster(x)
+  asc.obs &lt;- asc.from.raster(y)
+  # ensure all data is positive
+  asc.est = abs(asc.est)
+  asc.obs = abs(asc.obs)
+  # calculate the I similarity statistic for Quantifying Niche Overlap
+  I = Istat(asc.est, asc.obs)
+  print(I)
+}
+
+## Get Values
+pet.ground.eval &lt;- evalMeth.fun (pet.dk.obs, pet.dk.est)</code></pre>
+<pre><code>## [1] 0.9609129</code></pre>
+<pre class="r"><code>pet.intens.eval &lt;- evalMeth.fun (pet.time.obs, pet.time.est)</code></pre>
+<pre><code>## [1] 0.9232937</code></pre>
+</div>
+<div id="creer-la-figure" class="section level3">
+<h3>6 - Créer la figure</h3>
+<pre class="r"><code>basemap &lt;- list(&quot;sp.polygons&quot;, land, fill = &quot;gray90&quot;, col = &quot;gray60&quot;, lwd = 1)
+north &lt;- list(&quot;SpatialPolygonsRescale&quot;, layout.north.arrow(type = 1), 
+              offset = c(146100, 6835650), scale = 600)
+scale &lt;- list(&quot;SpatialPolygonsRescale&quot;, layout.scale.bar(), scale = 1500, 
+              offset = c(152600, 6831350), fill = c(&quot;transparent&quot;, &quot;black&quot;))
+text1 &lt;- list(&quot;sp.text&quot;, c(152600, 6831650), &quot;0&quot;)
+text2 &lt;- list(&quot;sp.text&quot;, c(154000, 6831650), &quot;1.5 km&quot;)
+
+
+ext.x &lt;- c(extent(pet.pt)[1], extent(pet.pt)[2])
+ext.y &lt;- c(extent(pet.pt)[3], extent(pet.pt)[4])
+
+valKappa &lt;- list(&quot;sp.text&quot;, c(152600, 6831650), 
+                 paste0(&quot;Valeur Kappa = &quot;, round(confMat$overall[2], 2)))
+
+p1 &lt;- spplot(pet.pt, &quot;act_obs&quot;, col.regions= c(&quot;red&quot;, &#39;transparent&#39;),edge.col=&#39;grey80&#39;, 
+             alpha=0.5,cex = 0.5,lwd=0.8,legendEntries = c(&quot;Pêche&quot;, &quot;Non-Pêche&quot;),
+             key.space= &quot;bottom&quot;,
+             par.settings=list(fontsize=list(text=9)), 
+             sp.layout=list(basemap, north,scale, text1,text2),
+             main = list(label=&quot;Actions Observées&quot;, 
+                         font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)))
+
+p2 &lt;-spplot(pet.pt, &quot;act_estim&quot;, col.regions= c(&quot;red&quot;, &#39;transparent&#39;),edge.col=&#39;grey80&#39;,
+            alpha=0.5,cex = 0.5,lwd=0.8,legendEntries = c(&quot;Pêche&quot;, &quot;Non-Pêche&quot;),
+            key.space= &quot;bottom&quot;,
+            par.settings=list(fontsize=list(text=9)),
+            sp.layout=list(basemap, valKappa),
+            main = list(label=&quot;Actions Estimées&quot;, 
+                        font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)))
+
+p3 &lt;- levelplot(pet.dk.obs, xlim=ext.x,ylim=ext.y,margin=FALSE, xlab=NULL, ylab=NULL,
+                scales=list(draw=FALSE),col.regions = viridis, colorkey = list(space=&quot;bottom&quot;),
+                main=list(label=&quot;Zones de pêche observées&quot;, 
+                          font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)), 
+                par.settings=list(fontsize=list(text=9))) +
+  latticeExtra::layer(sp.polygons(land, fill= &quot;gray90&quot;, col=&quot;gray50&quot;))
+
+p4 &lt;- levelplot(pet.dk.est,xlim=ext.x,ylim=ext.y, margin=FALSE, xlab=NULL, ylab=NULL,
+                scales=list(draw=FALSE),col.regions = viridis, colorkey = list(space=&quot;bottom&quot;),
+                main=list(label=&quot;Zones de pêche estimées&quot;, 
+                          font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)), 
+                par.settings=list(fontsize=list(text=9))) + 
+  latticeExtra::layer(sp.polygons(land, fill= &quot;gray90&quot;, col=&quot;gray50&quot;)) +
+  latticeExtra::layer(sp.text (c(152600,6831650), 
+                               paste0(&quot;Indice de similarité I = &quot;, round(pet.ground.eval, 2))))
+
+p5 &lt;- levelplot(pet.time.obs,xlim=ext.x,ylim=ext.y, margin=FALSE, xlab=NULL, ylab=NULL,
+                scales=list(draw=FALSE),col.regions = viridis, colorkey = list(space=&quot;bottom&quot;),
+                main=list(label=&quot;Intensité de pêche observée&quot;, 
+                          font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)), 
+                par.settings=list(fontsize=list(text=9))) + 
+  latticeExtra::layer(sp.polygons(land, fill= &quot;gray90&quot;, col=&quot;gray50&quot;))
+
+p6 &lt;- levelplot(pet.time.est,xlim=ext.x,ylim=ext.y, margin=FALSE, xlab=NULL, ylab=NULL,
+                scales=list(draw=FALSE),col.regions = viridis, colorkey = list(space=&quot;bottom&quot;),
+                main= list(label=&quot;Intensité de pêche estimée&quot;, 
+                           font = 1,just = &quot;left&quot;,x = grid::unit(5, &quot;mm&quot;)), 
+                par.settings=list(fontsize=list(text=9))) + 
+  latticeExtra::layer(sp.polygons(land, fill= &quot;gray90&quot;, col=&quot;gray50&quot;)) +
+  latticeExtra::layer(sp.text (c(152600,6831650), 
+                               paste0(&quot;Indice de similarité I = &quot;, round(pet.intens.eval, 2))))
+
+grid.arrange(p1,p2,p3,p4,p5,p6, nrow = 3, ncol = 2,
+             top= textGrob(&quot;Drague au pétoncle noir \n&quot;,gp=gpar(fontsize=12,font=2)))</code></pre>
+<div class="figure"><span id="fig:plotfr"></span>
+<img src="/post/reproduce.fr_files/figure-html/plotfr-1.png" alt="Distribution spatiales des descripteurs observés (gauche) et estimés (droite) (status de pêche, zones de pêche et intensité de pêche) pour une session de pêche à la drague au pétoncle noir." width="768" />
+<p class="caption">
+Figure 1: Distribution spatiales des descripteurs observés (gauche) et estimés (droite) (status de pêche, zones de pêche et intensité de pêche) pour une session de pêche à la drague au pétoncle noir.
+</p>
+</div>
+</div>
+</div>
