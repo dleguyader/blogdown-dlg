@@ -1,1 +1,0 @@
-Dans le fichier .bib, il faut remlacer pour tous les types inproceedings, publisher par editor, à la main.
