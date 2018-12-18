@@ -167,7 +167,9 @@ enableGitInfo = false
   #   https://sourcethemes.com/academic/docs/writing-markdown-latex/#highlighting-options
   highlight = true
   highlight_languages = []
-  highlight_style = "github"
+  #highlight_style = "github"
+  highlight_style = "atom-one-dark"
+  highlight_version = "9.9.0"
 
   # Enable native social sharing buttons?
   sharing = false
