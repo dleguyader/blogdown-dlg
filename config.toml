@@ -98,14 +98,15 @@ enableGitInfo = false
 
   # Color theme.
   #   Choose from `default`, `ocean`, `forest`, `dark`, `apogee`, `1950s`, `coffee`, `cupcake`, 'customgrey'
-  color_theme = "ocean"
+  #color_theme = "dlg"
+  color_theme = "default"
   
   # Enable users to switch between day and night mode?
   day_night = false
 
   # Font style.
   #   Choose from `default`, `classic`, or `playfair`.
-  font = "default"
+  font = "dlg"
 
   # Description for social sharing and search engines. If undefined, author role is used in place.
   description = ""
@@ -169,7 +170,7 @@ enableGitInfo = false
   highlight_style = "github"
 
   # Enable native social sharing buttons?
-  sharing = true
+  sharing = false
 
   # Privacy pack
   #   Show a cookie consent message to visitors

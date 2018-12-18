@@ -44,9 +44,6 @@ filter_default = 0
    name = "ais"
    tag = "ais"
 
-[[filter]]
-   name = "ecosystem-services"
-   tag = "ecosystem-services"
 
 
 [[filter]]

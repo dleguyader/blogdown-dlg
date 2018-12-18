@@ -41,10 +41,6 @@ filter_default = 0
    name = "ais"
    tag = "ais"
 
-[[filter]]
-   name = "services écosystémiques"
-   tag = "services écosystémiques"
-
 
 [[filter]]
    name = "modélisation"
