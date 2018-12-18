@@ -4,14 +4,21 @@
   <p class="powered-by">
     {{ with .Site.Copyright }}{{ . | markdownify}} &middot; {{ end }}
 
-    <img class="img-responsive center-block" src="/img/by-nc.svg" alt="CC-BY-NC">
-
-      Content shareable: <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC-BY-NC</a> 
+    <!-- <img class="img-responsive center-block" src="/img/by-nc.svg" alt="CC-BY-NC"> -->
+	<center>
+	<i class="fab fa-creative-commons fa-2x"></i><i class="fab fa-creative-commons-by fa-2x"></i><i class="fab fa-creative-commons-sa fa-2x"></i>
+	</center>
+	
+	<center>
+      Content shareable: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC-BY-SA</a> 
+	  
+	  © Damien Le Guyader 2018
       
       <br>Website composed in <a href="http://rmarkdown.rstudio.com/" target="_blank">R Markdown</a> via <a href="https://bookdown.org/yihui/blogdown/" target="_blank">Blogdown</a>.
       
       Web theme is <a href="https://github.com/gcushen/hugo-academic" target="_blank">Academic</a> for <a href="http://gohugo.io" target="_blank">Hugo</a>. Free hosting via <a href="https://www.netlify.com/" target="_blank">Netlify</a>.
-
+	</center>
+	  
     {{ if ne .Type "docs" }}
     <span class="float-right" aria-hidden="true">
       <a href="#" id="back_to_top">
