@@ -1,21 +1,21 @@
 +++
 # Date this page was created.
-date = "2013-04-27"
+date = "2016-04-27"
 
 # Project title.
-title = "Temporal and spatial interactions"
+title = "The Channel shipping network"
 
 # Project summary to display on homepage.
-summary = "Temporal and spatial interactions between organized maritime activities in bay of Brest (2009)"
+summary = "Spatial and hierarchical network of the Channel maritime traffic based on AIS data analysis"
 
 
 
 # Tags: can be used for filtering projects.
 # Example: `tags = ["spatial network", "maritime traffic"]`
-tags = ["temporal and spatial interactions","use conflicts", "Interactive"]
+tags = ["AIS","Network", "Interactive"]
 
 # Optional external URL for project (replaces project detail page).
-external_link = "http://menir.univ-brest.fr/graph_ist_rade_web"
+external_link = "http://doc.terramaris.fr/DLG/ais_network/network.html#about"
 
 # Does the project detail page use math formatting?
 math = false
