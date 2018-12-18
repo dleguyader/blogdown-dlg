@@ -1,16 +1,16 @@
 <footer class="site-footer">
-  {{ with .Site.GetPage "privacy.md" }}
-  <p class="powered-by">
-    {{ printf "<a href=\"%s\">%s</a>" .RelPermalink .Title | safeHTML }}
-  </p>
-  {{ end }}
+
 
   <p class="powered-by">
     {{ with .Site.Copyright }}{{ . | markdownify}} &middot; {{ end }}
 
-    Powered by the
-    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
-    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+    <img class="img-responsive center-block" src="/img/by-nc.svg" alt="CC-BY-NC">
+
+      Content shareable: <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC-BY-NC</a> 
+      
+      <br>Website composed in <a href="http://rmarkdown.rstudio.com/" target="_blank">R Markdown</a> via <a href="https://bookdown.org/yihui/blogdown/" target="_blank">Blogdown</a>.
+      
+      Web theme is <a href="https://github.com/gcushen/hugo-academic" target="_blank">Academic</a> for <a href="http://gohugo.io" target="_blank">Hugo</a>. Free hosting via <a href="https://www.netlify.com/" target="_blank">Netlify</a>.
 
     {{ if ne .Type "docs" }}
     <span class="float-right" aria-hidden="true">
