@@ -12,7 +12,7 @@ summary = "Interactions spatio-temporelles entre activités maritimes encadrées
 
 # Tags: can be used for filtering projects.
 # Example: `tags = ["spatial network", "maritime traffic"]`
-tags = ["interactions spatio-temporelles","conflit d'usage", "Interactive"]
+tags = ["interactions spatio-temporelles","conflits d-usage", "Interactive"]
 
 # Optional external URL for project (replaces project detail page).
 external_link = "http://menir.univ-brest.fr/graph_ist_rade_web"

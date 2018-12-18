@@ -50,7 +50,7 @@ filter_default = 0
   
 [[filter]]
   name = "Conflits d'usage"
-  tag = "conflit d'usage"
+  tag = "conflits d-usage"
 
 [[filter]]
   name = "Interactive"
