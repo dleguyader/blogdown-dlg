@@ -49,6 +49,10 @@ filter_default = 0
   tag = "Cumulative-effects"
 
 [[filter]]
+  name = "Use conflicts"
+  tag = "use conflicts"
+
+[[filter]]
   name = "Interactive"
   tag = "Interactive"
 +++

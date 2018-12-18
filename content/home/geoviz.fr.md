@@ -47,6 +47,10 @@ filter_default = 0
 [[filter]]
   name = "Effets cumulés"
   tag = "Cumulative-effects"
+  
+[[filter]]
+  name = "Conflits d'usage"
+  tag = "conflit d'usage"
 
 [[filter]]
   name = "Interactive"

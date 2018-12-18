@@ -37,5 +37,5 @@ weight = 5
 
 # About
 
-My research interests focus on the modeling of the marine and coastal socio-system from a perspective of planning and management support.
+My research interests focus on the marine and coastal socio-system modeling that can inform marine and coastal policy and management. 
 
