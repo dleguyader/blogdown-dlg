@@ -13,7 +13,7 @@ summary = "TRAnsport maritime, Fréquentation portuaire et Inégalités environn
 tags = ["traffic maritime", "inégalités portuaires", "ais"]
 
 # Optional external URL for project (replaces project detail page).
-external_link = "https://www-iuem.univ-brest.fr/pops/projects/ohm-littoral-caraibe-trafic"
+external_link = ""
 
 # Slides (optional).
 #   Associate this project with Markdown slides.
