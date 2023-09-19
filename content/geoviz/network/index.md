@@ -15,7 +15,7 @@ summary = "Spatial and hierarchical network of the Channel maritime traffic base
 tags = ["AIS","Network", "Interactive"]
 
 # Optional external URL for project (replaces project detail page).
-external_link = "http://doc.terramaris.fr/DLG/ais_network/network.html#about"
+external_link = "https://geo4seasdocs.toile-libre.org/network.html"
 
 # Does the project detail page use math formatting?
 math = false

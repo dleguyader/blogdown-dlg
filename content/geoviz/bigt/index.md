@@ -15,7 +15,7 @@ summary = "Exploring the spatio-temporal distribution of coastal recreational ac
 tags = ["Spatio-Temporal-Database", "Interactive"]
 
 # Optional external URL for project (replaces project detail page).
-external_link = "http://doc.terramaris.fr/DLG/ESDA_BIGT/esda_bigt.html"
+external_link = "https://geo4seasdocs.toile-libre.org/esda/esda_bigt.html"
 
 # Does the project detail page use math formatting?
 math = false
