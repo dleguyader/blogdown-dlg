@@ -47,6 +47,10 @@ filter_default = 0
 
 
 [[filter]]
+   name = "ais"
+   tag = "maritime trafic"
+
+[[filter]]
    name = "modeling"
    tag = "modeling"
 
