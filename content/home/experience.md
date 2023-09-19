@@ -24,7 +24,7 @@ date_format = "January 2006"
   company = "Geo4Seas"
   company_url = "https://www.geo4seas.com/"
   location = "Le Relecq-Kerhuon"
-  date_start = "2020"
+  date_start = "2020-01-01"
   date_end = ""
   #description = """ """
 
@@ -35,7 +35,7 @@ date_format = "January 2006"
   company_url = "http://www.terramaris.fr/"
   location = "Plouzané"
   date_start = "2016-07-01"
-  date_end = "2020"
+  date_end = "2020-01-01"
   #description = """ """
 
 [[experience]]
