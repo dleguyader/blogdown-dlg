@@ -1,6 +1,6 @@
 +++
 title = "Pairing AIS data and underwater topography to assess maritime traffic pressures on cetaceans: Case study in the Guadeloupean waters of the Agoa sanctuary"
-date = "2017-01-01"
+date = "2022-09-01"
 
 
 authors = ["B. Madon", "D. Le Guyader", "JL. Jung", "B. De Montgolfier", "PJ. Lopez", "E. Foulquier", "L. Bouveret", "I. Le Berre"]
