@@ -29,7 +29,7 @@ disqusShortname = ""
 googleAnalytics = ""
 
 # Default language to use (if you setup multilingual support)
-defaultContentLanguage = "fr"
+defaultContentLanguage = "en"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
 defaultContentLanguageInSubdir = false
 
@@ -377,7 +377,7 @@ enableGitInfo = false
 
 # Configure the French version of the website
 [languages.fr]
-  languageCode = "en"
+  languageCode = "fr"
   title = ""
   [languages.fr.params]
      name = "Damien Le Guyader"
