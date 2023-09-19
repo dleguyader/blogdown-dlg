@@ -13,7 +13,7 @@ summary = "Maritime transport, port attendance and inequalities environmental is
 tags = ["Maritime Trafic", "ais"]
 
 # Optional external URL for project (replaces project detail page).
-external_link = ""
+external_link = "https://www-iuem.univ-brest.fr/pops/projects/ohm-littoral-caraibe-trafic"
 
 # Slides (optional).
 #   Associate this project with Markdown slides.
@@ -38,7 +38,7 @@ url_code = ""
 # To use, add an image named `featured.jpg/png` to your project's folder. 
 [image]
   # Caption (optional)
-  caption = "Spatial and temporal intersections between activities (2009)"
+  caption = "Maritime trafic density (GT, 2022)"
   
   # Focal point (optional)
   # Options: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight
