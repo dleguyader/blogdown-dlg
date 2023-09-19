@@ -53,18 +53,19 @@ enableGitInfo = false
   
   # Your details.
   name = "Damien Le Guyader"
-  role = "R&D Project manager (PhD)"
+  role = "CEO (PhD)"
 
   # Organizations/Affiliations.
   #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
-  organizations = [ { name = "Terra Maris", url = "http://www.terramaris.fr/" } ]
+  organizations = [ { name = "Geo4Seas", url = "https://www.geo4seas.com/" } ]
 
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
   #avatar = "ID.jpg"  # Specify an avatar image (in `static/img/` folder) or delete value to disa
   
   # Details for the Contact Widget
   email = "d.le.guyader@gmail.com"
-  address = "Place Nicolas Copernic, 29380 Plouzané"
+  address = "3 Venelle de la Tour d'Auvergne, 29480 Le Relecq-Kerhuon"
+  
   
 
 
@@ -380,7 +381,7 @@ enableGitInfo = false
   title = ""
   [languages.fr.params]
      name = "Damien Le Guyader"
-     role = "Chargé de projets R&D"
+     role = "CEO"
    [[languages.fr.menu.main]]
      name = "Accueil"
      url = "#about"
