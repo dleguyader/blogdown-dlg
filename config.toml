@@ -377,7 +377,7 @@ enableGitInfo = false
 
 # Configure the French version of the website
 [languages.fr]
-  languageCode = "fr"
+  languageCode = "en"
   title = ""
   [languages.fr.params]
      name = "Damien Le Guyader"
