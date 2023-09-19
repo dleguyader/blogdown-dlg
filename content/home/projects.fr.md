@@ -41,6 +41,14 @@ filter_default = 0
    name = "ais"
    tag = "ais"
 
+[[filter]]
+   name = "traffic maritime"
+   tag = "traffic maritime"
+   
+[[filter]]
+   name = "inégalités portuaires"
+   tag = "inégalités portuaires"
+
 
 [[filter]]
    name = "modélisation"

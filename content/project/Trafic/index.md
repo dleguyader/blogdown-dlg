@@ -10,7 +10,7 @@ summary = "Maritime transport, port attendance and inequalities environmental is
 
 # Tags: can be used for filtering projects.
 # Example: `tags = ["floating wind farms ", "socio-ecosystem"]`
-tags = ["Maritime Trafic", "ais"]
+tags = ["maritime trafic", "ais"]
 
 # Optional external URL for project (replaces project detail page).
 external_link = "https://www-iuem.univ-brest.fr/pops/projects/ohm-littoral-caraibe-trafic"

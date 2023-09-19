@@ -10,7 +10,7 @@ summary = "TRAnsport maritime, Fréquentation portuaire et Inégalités environn
 
 # Tags: can be used for filtering projects.
 # Example: `tags = ["floating wind farms ", "socio-ecosystem"]`
-tags = ["Traffic maritime", "inégalités portuaires", "ais"]
+tags = ["traffic maritime", "inégalités portuaires", "ais"]
 
 # Optional external URL for project (replaces project detail page).
 external_link = "https://www-iuem.univ-brest.fr/pops/projects/ohm-littoral-caraibe-trafic"
