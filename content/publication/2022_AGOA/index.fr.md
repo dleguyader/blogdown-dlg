@@ -3,7 +3,7 @@ title = "Pairing AIS data and underwater topography to assess maritime traffic p
 date = "2017-01-01"
 
 
-authors = ["B. Madon", D. Le Guyader", "JL. Jung", "B. De Montgolfier", "PJ. Lopez", "E. Foulquier", "L. Bouveret", "I. Le Berre"]
+authors = ["B. Madon", "D. Le Guyader", "JL. Jung", "B. De Montgolfier", "PJ. Lopez", "E. Foulquier", "L. Bouveret", "I. Le Berre"]
 
 # Publication type.
 # Legend:
